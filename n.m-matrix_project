@@ -1,0 +1,50 @@
+
+.data
+matrix1:    .word 1, 2, 3
+             .word 4, 5, 6
+             .word 7, 8, 9
+
+matrix2:    .word 9, 8, 7
+             .word 6, 5, 4
+             .word 3, 2, 1
+
+result:     .space 36  # Space for the resulting 3x3 matrix
+
+.text
+.globl main
+
+main:
+    la $t0, matrix1     # Load address of matrix1
+    la $t1, matrix2     # Load address of matrix2
+    la $t2, result      # Load address of result
+
+    li $t3, 0           # Row counter for matrix1
+outer_loop:
+    li $t4, 0           # Column counter for result matrix
+inner_loop:
+    li $t5, 0           # Reset the sum to 0
+    li $t6, 0           # Column counter for matrix2
+
+    mul_loop:
+        lw $t7, ($t0)       # Load element from matrix1
+        lw $t8, ($t1)       # Load element from matrix2
+        mul $t9, $t7, $t8   # Multiply elements
+        add $t5, $t5, $t9   # Accumulate sum
+
+        addi $t0, $t0, 4    # Move to next element in matrix1
+        addi $t1, $t1, 12   # Move to next row in matrix2
+        addi $t6, $t6, 1    # Increment column counter for matrix2
+        bne $t6, 3, mul_loop  # Loop until column counter == 3
+
+    sw $t5, ($t2)        # Store the sum in the result matrix
+    addi $t2, $t2, 4     # Move to next element in result matrix
+    addi $t4, $t4, 1     # Increment column counter for result matrix
+    addi $t0, $t0, 8     # Move to next column in matrix1
+    sub $t1, $t1, 24     # Move back to the start of the current row in matrix2
+    bne $t4, 3, inner_loop  # Loop until column counter == 3
+
+    addi $t3, $t3, 1     # Increment row counter for matrix1
+    bne $t3, 3, outer_loop  # Loop until row counter == 3
+
+    li $v0, 10           # Exit the program
+    syscall
