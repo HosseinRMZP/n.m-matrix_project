@@ -1,1 +1,1 @@
-optional voice control powered by OpenAI speech recognition. Moves can be played by mouse or by saying square-to-square commands like “e2 e4”, and the app automatically detects check, checkmate, and draw states.
+
